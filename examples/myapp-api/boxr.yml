@@ -1,0 +1,43 @@
+# Uses the base nodejs box
+box: boxr/nodejs
+
+# Name of this service
+name: myapp-api
+
+# Version of your app
+version: 0.0.1a
+
+# Services Definition (Your App is dependent on?)
+services:
+  # Requires a rethinkdb box to exist
+  - boxr/rethinkdb
+  # Requires a redis box to exist
+  - boxr/redis
+
+# Build definition (What is needed to run the app?)
+build:
+  # The steps that will be executed on build
+  steps:
+    # A step that executes `npm install` command
+    - npm-install
+    # A step that executes your app as a service
+    - node-start-service
+
+env: 
+  MYAPP_API_URL: http://$$HOST$$/
+
+# Test Definition (How can we CI your app?)
+test:
+  steps:
+    # A step that executes `npm test` command
+    - npm-test
+
+# Health definition (Is your app running?)
+health:
+  steps:
+    # A step that checks that a process is runnning
+    - process-running
+      name: node api.js
+    # A step that curl calls app and expects response
+    - curl
+      url: http://$$HOST$$/

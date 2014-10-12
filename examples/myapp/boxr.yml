@@ -1,0 +1,49 @@
+# Uses the base nodejs box
+box: boxr/nodejs
+
+# Name of this service
+name: myapp
+
+# Version of your app
+version: 0.0.1a
+
+# Services Definition (Your App is dependent on?)
+services:
+  # Requires a redis box to exist
+  - boxr/redis
+  # Requires a myapp-api to exist (which is another boxr).
+  - myapp-api
+
+# Build definition (What is needed to run the app?)
+build:
+  # A step that executes `npm install` command
+  - npm-install
+
+# Test Definition (How can we CI your app?)
+test:
+  # A step that executes `npm test` command
+  - npm-test
+
+deploy:
+  # A step that executes your app as a service
+  - node-start-service
+
+# Health definition (Is your app running?)
+health:
+  # A step that checks that a process is runnning
+  process-running:
+    name: node app.js
+  # A step that curl calls app and expects response
+  curl:
+    url: http://$$HOST$$/
+
+cache: 
+  - .npm
+
+# Environment Variables (these define certain variables that could be used in dependent boxes)
+env: 
+  MYAPP_APP_URL: http://$$HOST$$/
+
+
+
+
