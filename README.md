@@ -11,7 +11,11 @@ of features that are coming your way in 3..2..1..
 - Monitors your apps and warns you about a failing app
 - Apps (Boxes) can depend on others which will be scaled with the app
 
+[Read the Docs](Docs/README.md)
+
 ![flow chart](Docs/boxr-flow-diagram.png)
+
+
 
 
 
