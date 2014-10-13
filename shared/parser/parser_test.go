@@ -2,10 +2,6 @@ package parser
 
 import "testing"
 
-func TestParseBoxrFile(t *testing.T) {
-	t.Skip("skipping until I figure out how to do file stuff in tests")
-}
-
 func TestParseBoxr(t *testing.T) {
 	boxrfile := `
   box: boxr/scratch

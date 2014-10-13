@@ -13,8 +13,8 @@ deps-save:
 	godep save -r ./...
 
 build: 
-	go build -o bin/boxr -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cli
-	go build -o bin/boxrd -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/service
+	go build -o bin/boxr -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/boxr
+	go build -o bin/shelfd -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/shelf
 
 test: godep
 	godep go test -v ./...
