@@ -14,6 +14,7 @@ deps-save:
 
 build: 
 	go build -o bin/boxr -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/boxr
+	go build -o bin/forklift -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/forklift
 	go build -o bin/shelfd -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/shelf
 
 test: godep
