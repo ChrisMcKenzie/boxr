@@ -96,6 +96,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     sudo sh -c 'echo deb http://get.docker.io/ubuntu docker main' > /etc/apt/sources.list.d/docker.list
     sudo apt-get update
     sudo apt-get install -y linux-image-generic-lts-raring linux-headers-generic-lts-raring
-    sudo apt-get install -y lxc-docker-0.9.0
+    sudo apt-get install -y lxc-docker-1.0.1
   EOF
 end
