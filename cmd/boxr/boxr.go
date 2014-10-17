@@ -1,19 +1,22 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/fatih/color"
 	"github.com/Secret-Ironman/boxr/shared/api"
 	"github.com/Secret-Ironman/boxr/shared/types"
 )
 
 var (
-	host = "localhost"
-	port = 3000
+	host  = "localhost"
+	port  = 3000
+	db    = "boxr.db"
+	green = color.New(color.FgGreen).SprintFunc()
+	red   = color.New(color.FgRed).SprintFunc()
 )
 
 func main() {
@@ -39,42 +42,76 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:      "add",
-			ShortName: "a",
-			Usage:     "Add a new pallet to the wharehouse",
+			Name:  "pallet",
+			Usage: "Manage Pallets",
+			Subcommands: []cli.Command{
+				{
+					Name:      "create",
+					ShortName: "c",
+					Usage:     "Create a new pallet in the wharehouse",
 
+					Action: func(c *cli.Context) {
+
+						name := c.Args().First()
+						repo := c.Args()[1]
+						// Create a new pallet.
+						payload := &types.Pallet{
+							Name: name,
+							Url:  repo,
+						}
+
+						client := api.NewApiClient(c.GlobalString("host"), c.GlobalInt("port"), false)
+						resp, err := client.CreatePallet(payload)
+
+						if err != nil || !resp.Success {
+							log.Fatal(err)
+							fmt.Printf("%s Failed to create Pallet...\n", red("✘"))
+							return
+						}
+
+						message, _ := resp.Message.(map[string]interface{})
+						fmt.Printf("%s Succussfully created \"%s\" Pallet in %s\n", green("✔︎"), message["name"], resp.Took)
+					},
+				}, {
+					Name:      "list",
+					ShortName: "l",
+					Usage:     "List all Pallets in the wharehouse",
+					Action: func(c *cli.Context) {
+						client := api.NewApiClient(c.GlobalString("host"), c.GlobalInt("port"), false)
+						resp, err := client.GetAllPallets()
+
+						if err != nil {
+							fmt.Printf("%s Failed to fetch Pallets\n", red("✘"))
+							return
+						}
+
+						message, _ := resp.Message.([]interface{})
+						for _, value := range message {
+							pallet := value.(map[string]interface{})
+							fmt.Printf(" %s: %s\n", pallet["name"], pallet["url"])
+						}
+					},
+				},
+			},
+		}, {
+			Name:      "serve",
+			ShortName: "s",
+			Usage:     "Start a boxr web service",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "db",
+					Value:  db,
+					Usage:  "Database for the boxr api",
+					EnvVar: "BOXR_DB",
+				},
+			},
 			Action: func(c *cli.Context) {
-				name := c.Args().First()
-				repo := c.Args()[1]
-				// post repo link to api and enqueue
-				// it in forklift creation.
-				payload := &types.Pallet{}
-				payload.Name = name
-				payload.Url = repo
-
-				client := api.NewApiClient(c.GlobalString("host"), c.GlobalInt("port"), false)
-				resp, err := client.CreatePallet(payload)
-
+				a, err := api.NewApi(db, 3000)
 				if err != nil {
 					log.Fatal(err)
 				}
 
-				defer resp.Body.Close()
-				body, _ := ioutil.ReadAll(resp.Body)
-				var response api.Response
-				e := json.Unmarshal(body, &response)
-				if e != nil {
-					log.Fatal(err)
-				}
-				log.Printf("%+v", response)
-			},
-		},
-		{
-			Name:      "serve",
-			ShortName: "s",
-			Usage:     "Start a boxr web service",
-			Action: func(c *cli.Context) {
-				api.Run(":3000")
+				a.Run()
 			},
 		},
 	}

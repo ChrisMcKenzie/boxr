@@ -2,7 +2,7 @@ package api
 
 import "github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/gin-gonic/gin"
 
-func CommitsHookGet(c *gin.Context) {
+func (a *Api) CommitsHookGet(c *gin.Context) {
 	// Queue Process:
 	// ==============
 	// get information from sqlite about id
@@ -14,6 +14,5 @@ func CommitsHookGet(c *gin.Context) {
 	// run test steps on box
 	// if pass run deploy steps
 	// else notify failure
-
 	c.String(200, "hook called")
 }

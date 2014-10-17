@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/Secret-Ironman/boxr/shared/types"
@@ -29,21 +30,46 @@ func NewApiClient(url string, port int, ssl bool) *apiClient {
 	return c
 }
 
-func (c *apiClient) CreatePallet(pallet *types.Pallet) (resp *http.Response, err error) {
-	return c.CallApi("POST", "pallet", pallet)
+func (c *apiClient) CreatePallet(pallet *types.Pallet) (resp *Response, err error) {
+	return c.SendData("POST", "pallets", pallet)
 }
 
-func (c *apiClient) CallApi(method string, path string, payload interface{}) (resp *http.Response, err error) {
+func (c *apiClient) GetAllPallets() (resp *Response, err error) {
+	return c.GetData("GET", "pallets")
+}
+
+func (c *apiClient) SendData(method string, path string, payload interface{}) (resp *Response, err error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}
 	req, err := http.NewRequest(method, c.ParseUrl(path), bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
+
+	return c.callApi(req)
+}
+
+func (c *apiClient) GetData(method string, path string) (resp *Response, err error) {
+	req, _ := http.NewRequest(method, c.ParseUrl(path), nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	return c.callApi(req)
+}
+
+func (c *apiClient) callApi(req *http.Request) (resp *Response, err error) {
+	response, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	return c.client.Do(req)
+
+	defer response.Body.Close()
+	body, _ := ioutil.ReadAll(response.Body)
+	e := json.Unmarshal(body, &resp)
+
+	if e != nil {
+		return nil, e
+	}
+	return resp, nil
 }
 
 func (c *apiClient) ParseUrl(uri string) (url string) {
