@@ -1,9 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"io/ioutil"
 
-	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/gopkg.in/yaml.v1"
+	"gopkg.in/yaml.v2"
 )
 
 type Boxr struct {
@@ -33,13 +34,10 @@ type Boxr struct {
 	// Deploy phase specifies what to do to
 	// deploy the service completely on its
 	// docker container.
-	Deploy Phase `yaml:"deploy,omitempty"`
+	Run string `yaml:"run,omitempty"`
 }
 
-type Phase struct {
-	// Step neccesary to accomplish this phase
-	Steps []string
-}
+type Phase []string
 
 func ParseBoxr(data string) (*Boxr, error) {
 	boxr := Boxr{}
@@ -55,4 +53,11 @@ func ParseBoxrFile(file string) (*Boxr, error) {
 	}
 
 	return ParseBoxr(string(data))
+}
+
+func (p *Phase) RunSteps(file *[]byte, prefix string) {
+	for _, step := range *p {
+		step = fmt.Sprintf("RUN %s; %s\n", prefix, step)
+		*file = append(*file, []byte(step)...)
+	}
 }

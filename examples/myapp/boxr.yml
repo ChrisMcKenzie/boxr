@@ -31,7 +31,7 @@ deploy:
 # Health definition (Is your app running?)
 health:
   # A step that checks that a process is runnning
-  process-running:
+  process.running:
     name: node app.js
   # A step that curl calls app and expects response
   curl:
@@ -43,7 +43,3 @@ cache:
 # Environment Variables (these define certain variables that could be used in dependent boxes)
 env: 
   MYAPP_APP_URL: http://$$HOST$$/
-
-
-
-

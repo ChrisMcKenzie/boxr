@@ -2,7 +2,7 @@ package yaml_test
 
 import (
 	"fmt"
-	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/gopkg.in/yaml.v1"
+	"gopkg.in/yaml.v1"
 	. "gopkg.in/check.v1"
 	"math"
 	"strconv"

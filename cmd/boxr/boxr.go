@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/codegangsta/cli"
-	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/fatih/color"
+	"github.com/codegangsta/cli"
+	"github.com/fatih/color"
 	"github.com/Secret-Ironman/boxr/shared/api"
 	"github.com/Secret-Ironman/boxr/shared/types"
 )
@@ -88,7 +88,7 @@ func main() {
 						message, _ := resp.Message.([]interface{})
 						for _, value := range message {
 							pallet := value.(map[string]interface{})
-							fmt.Printf(" %s: %s\n", pallet["name"], pallet["url"])
+							fmt.Printf(" %s: %s (%s)\n", pallet["name"], pallet["url"], pallet["status"])
 						}
 					},
 				},

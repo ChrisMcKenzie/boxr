@@ -1,9 +1,11 @@
 // taken from drone
-package repo
+package git
 
 import (
 	"fmt"
 	"strings"
+
+	"github.com/Secret-Ironman/boxr/shared/process"
 )
 
 type Repo struct {
@@ -93,30 +95,40 @@ func (r *Repo) IsGit() bool {
 
 // returns commands that can be used in a Dockerfile
 // to clone the repository.
-//
-// TODO we should also enable Mercurial projects and SVN projects
-func (r *Repo) Commands() []string {
+func (r *Repo) Clone() (string, string, error) {
 	// get the branch. default to master
 	// if no branch exists.
 	branch := r.Branch
 	if len(branch) == 0 {
 		branch = "master"
 	}
+	// fmt.Sprintf("--depth=%d", r.Depth),
+	return process.Exec("Clone Repo", "git", "clone", "--recursive", fmt.Sprintf("--branch=%s", branch), r.Path, r.Dir)
+	// log.Println(stderr)
+	// log.Println(stdout)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// if len(r.PR) > 0 {
+	// 	// If a specific PR is provided then we need to clone it.
+	// 	com.ExecCmdDir("/var/repos", fmt.Sprintf("git clone --depth=%d --recursive %s %s", r.Depth, r.Path, r.Dir))
+	// 	com.ExecCmdDir("/var/repos", fmt.Sprintf("git fetch origin +refs/pull/%s/head:refs/remotes/origin/pr/%s", r.PR, r.PR))
+	// 	com.ExecCmdDir("/var/repos", fmt.Sprintf("git checkout -qf -b pr/%s origin/pr/%s", r.PR, r.PR))
+	// } else {
+	// 	// Otherwise just clone the branch.
+	// 	com.ExecCmdDirBytes("/var/repos", fmt.Sprintf("git clone --depth=%d --recursive --branch=%s %s %s", r.Depth, branch, r.Path, r.Dir))
+	// 	// If a specific commit is provided then we'll need to check it out.
+	// 	if len(r.Commit) > 0 {
+	// 		com.ExecCmdDirBytes("/var/repos", fmt.Sprintf("git checkout -qf %s", r.Commit))
+	// 	}
+	// }
+}
 
-	cmds := []string{}
-	if len(r.PR) > 0 {
-		// If a specific PR is provided then we need to clone it.
-		cmds = append(cmds, fmt.Sprintf("git clone --depth=%d --recursive %s %s", r.Depth, r.Path, r.Dir))
-		cmds = append(cmds, fmt.Sprintf("git fetch origin +refs/pull/%s/head:refs/remotes/origin/pr/%s", r.PR, r.PR))
-		cmds = append(cmds, fmt.Sprintf("git checkout -qf -b pr/%s origin/pr/%s", r.PR, r.PR))
-	} else {
-		// Otherwise just clone the branch.
-		cmds = append(cmds, fmt.Sprintf("git clone --depth=%d --recursive --branch=%s %s %s", r.Depth, branch, r.Path, r.Dir))
-		// If a specific commit is provided then we'll need to check it out.
-		if len(r.Commit) > 0 {
-			cmds = append(cmds, fmt.Sprintf("git checkout -qf %s", r.Commit))
-		}
-	}
-
-	return cmds
+func (r *Repo) Pull() (string, string, error) {
+	return process.ExecDir(-1, r.Dir, "Pull Repo", "git", "pull")
+	// log.Println(stderr)
+	// log.Println(stdout)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 }

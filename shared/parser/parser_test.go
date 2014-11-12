@@ -10,14 +10,10 @@ func TestParseBoxr(t *testing.T) {
   services: 
     - boxr/redis
   build:
-    steps:
-      - npm-install
+    - npm-install
   test:
-    steps:
-      - npm test
-  deploy:
-    steps:
-      - npm start
+    - npm test
+  run: npm start
   `
 
 	boxr, err := ParseBoxr(boxrfile)

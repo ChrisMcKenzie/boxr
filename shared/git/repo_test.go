@@ -1,4 +1,4 @@
-package repo
+package git
 
 import (
 	"testing"
@@ -51,4 +51,12 @@ func TestIsGit(t *testing.T) {
 			t.Errorf("IsGit %s was %v, expected %v", r.path, remote, r.remote)
 		}
 	}
+}
+
+func TestClone(t *testing.T) {
+	repo := Repo{
+		Path: "https://github.com/boxr-io/test_pallet.git",
+	}
+
+	repo.Clone()
 }

@@ -1,18 +1,15 @@
 package api
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
+	"net/http"
 	"time"
 
-	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"github.com/Secret-Ironman/boxr/shared/types"
+	"github.com/gin-gonic/gin"
 )
-
-// type Pallet struct {
-// 	Id   int
-// 	Name string
-// 	Url  string
-// }
 
 func (a *Api) PalletGetOne(c *gin.Context) {
 	start := time.Now()
@@ -82,4 +79,34 @@ func (a *Api) PalletCreate(c *gin.Context) {
 		Took:    time.Since(start),
 		Success: true,
 	})
+}
+
+func (a *Api) PalletBuild(c *gin.Context) {
+	start := time.Now()
+	name := c.Params.ByName("name")
+
+	var pallet types.Pallet
+
+	err := a.db.SelectOne(&pallet, "select * from pallets where Name=?", name)
+
+	if err != nil {
+		c.JSON(500, Response{
+			Message: err,
+			Took:    time.Since(start),
+			Success: false,
+		})
+		return
+	}
+
+	data, _ := json.Marshal(pallet)
+	resp, err := http.Post("http://localhost:3001/pallet", "application/json", bytes.NewBuffer(data))
+
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println(resp)
+	}
+
+	// enqueue here
+	c.String(200, "enqueued...")
 }

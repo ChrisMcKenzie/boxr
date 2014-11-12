@@ -6,10 +6,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	_ "github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/mattn/go-sqlite3"
+	"github.com/Secret-Ironman/boxr/shared/db"
 	"github.com/Secret-Ironman/boxr/shared/types"
 	"github.com/coopernurse/gorp"
+	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Response struct {
@@ -23,23 +24,23 @@ type Api struct {
 	Port int
 }
 
-func NewApi(dbFile string, port int) (*Api, error) {
-	a := new(Api)
-	a.db = a.initDb(dbFile)
+func NewApi(dbFile string, port int) (a *Api, err error) {
+	a = new(Api)
+	a.db, err = db.New(dbFile)
+	checkErr(err, "Create tables failed")
 	a.Port = port
 	return a, nil
 }
 
 func (c *Api) Run() {
-	r := gin.New()
-
-	r.Use(gin.Recovery())
+	r := gin.Default()
 
 	api := r.Group("/api")
 	{
 		api.GET("/commits/:id", c.CommitsHookGet)
 		api.GET("/pallets", c.PalletGetAll)
 		api.GET("/pallets/:name", c.PalletGetOne)
+		api.GET("/pallets/:name/build", c.PalletBuild)
 		api.POST("/pallets", c.PalletCreate)
 	}
 

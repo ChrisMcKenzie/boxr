@@ -2,7 +2,7 @@ package hello
 
 import (
 	"net/http"
-	"github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // This function's name is a must. App Engine uses it to drive the requests properly.

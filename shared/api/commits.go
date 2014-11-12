@@ -1,6 +1,6 @@
 package api
 
-import "github.com/Secret-Ironman/boxr/Godeps/_workspace/src/github.com/gin-gonic/gin"
+import "github.com/gin-gonic/gin"
 
 func (a *Api) CommitsHookGet(c *gin.Context) {
 	// Queue Process:

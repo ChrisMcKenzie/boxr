@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/Secret-Ironman/boxr",
-	"GoVersion": "go1.3.1",
+	"GoVersion": "go1.3.3",
 	"Packages": [
 		"./..."
 	],
@@ -11,8 +11,18 @@
 			"Rev": "f7ebb761e83e21225d1d8954fde853bf8edd46c4"
 		},
 		{
+			"ImportPath": "github.com/coopernurse/gorp",
+			"Comment": "v1.7",
+			"Rev": "5d19ebd22fdcf3b9fb1c8cbfcf1d4e78e102f1e0"
+		},
+		{
 			"ImportPath": "github.com/fatih/color",
 			"Rev": "3161cccfa22c6243e02aa984cf2886d022024cec"
+		},
+		{
+			"ImportPath": "github.com/fsouza/go-dockerclient",
+			"Comment": "0.2.1-269-g949b652",
+			"Rev": "949b65236a770c3bd15126e9047a41462bb24811"
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin",
