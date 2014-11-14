@@ -9,11 +9,11 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/Secret-Ironman/boxr/shared/docker"
 	"github.com/Secret-Ironman/boxr/shared/dockerfile"
 	"github.com/Secret-Ironman/boxr/shared/git"
 	"github.com/Secret-Ironman/boxr/shared/parser"
 	"github.com/Secret-Ironman/boxr/shared/utils"
-	"github.com/fsouza/go-dockerclient"
 )
 
 var log = utils.Logger()
@@ -32,19 +32,24 @@ type Builder struct {
 	// image created by the builder
 	image *docker.Image
 	// container to run
-	container *docker.Container
+	container *docker.Run
 	// service containers
-	services *[]docker.Container
+	services []*docker.Container
 }
 
 func (b *Builder) Run() error {
 	// 1.) setup image and service containers
-	b.setup()
+	if err := b.setup(); err != nil {
+		return err
+	}
 	// 2.) run image
+	if err := b.run(); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (b *Builder) setup() {
+func (b *Builder) setup() error {
 
 	// 1.) create tar stream
 	inputbuf := bytes.NewBuffer(nil)
@@ -54,18 +59,127 @@ func (b *Builder) setup() {
 	b.writeSourceDir(tr)
 	tr.Close()
 
-	// 3.) build docker images
+	// 3.) build docker service images
+	for _, service := range b.Boxr.Services {
+
+		// Parse the name of the Docker image
+		// And then construct a fully qualified image name
+		cname := service
+
+		// Get the image info
+		img, err := b.dockerClient.Images.Inspect(cname)
+		if err != nil {
+			// Get the image if it doesn't exist
+			if err := b.dockerClient.Images.Pull(cname); err != nil {
+				return fmt.Errorf("Error: Unable to pull image %s", cname)
+			}
+
+			img, err = b.dockerClient.Images.Inspect(cname)
+			if err != nil {
+				return fmt.Errorf("Error: Invalid or unknown image %s", cname)
+			}
+		}
+
+		// debugging
+		log.Info("starting service container %s", cname)
+
+		// Run the contianer
+		run, err := b.dockerClient.Containers.RunDaemonPorts(cname, img.Config.ExposedPorts)
+		if err != nil {
+			return err
+		}
+
+		// Get the container info
+		info, err := b.dockerClient.Containers.Inspect(run.ID)
+		if err != nil {
+			// on error kill the container since it hasn't yet been
+			// added to the array and would therefore not get
+			// removed in the defer statement.
+			b.dockerClient.Containers.Stop(run.ID, 10)
+			b.dockerClient.Containers.Remove(run.ID)
+			return err
+		}
+
+		// Add the running service to the list
+		b.services = append(b.services, info)
+	}
+
 	// make sure the image isn't empty. this would be bad
 	if len(b.Boxr.Box) == 0 {
 		log.Error("Fatal Error, No Docker Image specified")
 		// return fmt.Errorf("Error: missing Docker image")
 	}
+
+	b.dockerClient.Images.Build(b.Boxr.Name, inputbuf)
+
+	// debugging
+	log.Info("building app in %s", b.Repo.Dir)
+
+	// get the image details
+	var err error
+	b.image, err = b.dockerClient.Images.Inspect(b.Boxr.Name)
+	if err != nil {
+		// if we have problems with the image make sure
+		// we remove it before we exit
+		log.Error("failed to verify build image %s", b.Boxr.Name)
+		return err
+	}
+
+	return nil
+}
+
+func (b *Builder) run() error {
+	// create and run the container
+	conf := docker.Config{
+		Image:        b.image.ID,
+		AttachStdin:  false,
+		AttachStdout: true,
+		AttachStderr: true,
+	}
+
+	// configure if Docker should run in privileged mode
+	host := docker.HostConfig{
+	// Privileged: (b.Privileged && len(b.Repo.PR) == 0),
+	}
+
+	log.Notice("starting build %s", b.Boxr.Name)
+
+	// create the container from the image
+	run, err := b.dockerClient.Containers.Create(&conf)
+	if err != nil {
+		return err
+	}
+
+	// cache instance of docker.Run
+	b.container = run
+
+	// attach to the container
+	// go func() {
+	// 	b.dockerClient.Containers.Attach(run.ID, &writer{os.Stdout, 0})
+	// }()
+
+	// start the container
+	if err := b.dockerClient.Containers.Start(run.ID, &host); err != nil {
+		return err
+	}
+
+	// wait for the container to stop
+	// wait, err := b.dockerClient.Containers.Wait(run.ID)
+	// if err != nil {
+	// 	return err
+	// }
+	return nil
 }
 
 func (b *Builder) writeDockerfile(tr *tar.Writer) {
 	t := time.Now()
 	df := dockerfile.New(b.Boxr.Box)
 	df.WriteEnv("BOXR", "true")
+
+	for _, step := range b.Boxr.Build {
+		df.WriteRun(fmt.Sprintf("%s; %s", b.Repo.Dir, step))
+	}
+
 	tr.WriteHeader(&tar.Header{Name: "Dockerfile", Size: int64(len(df.Bytes())), ModTime: t, AccessTime: t, ChangeTime: t})
 	fmt.Printf("%v", df)
 	tr.Write(df.Bytes())

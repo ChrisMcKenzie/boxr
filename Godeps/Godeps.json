@@ -20,11 +20,6 @@
 			"Rev": "3161cccfa22c6243e02aa984cf2886d022024cec"
 		},
 		{
-			"ImportPath": "github.com/fsouza/go-dockerclient",
-			"Comment": "0.2.1-269-g949b652",
-			"Rev": "949b65236a770c3bd15126e9047a41462bb24811"
-		},
-		{
 			"ImportPath": "github.com/gin-gonic/gin",
 			"Comment": "v0.4-8-g3b079bb",
 			"Rev": "3b079bb6f79ae501e73a5401c41b589f6616b61e"

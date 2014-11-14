@@ -57,7 +57,7 @@ func ParseBoxrFile(file string) (*Boxr, error) {
 
 func (p *Phase) RunSteps(file *[]byte, prefix string) {
 	for _, step := range *p {
-		step = fmt.Sprintf("RUN %s; %s\n", prefix, step)
+		step = fmt.Sprintf("%s; %s", prefix, step)
 		*file = append(*file, []byte(step)...)
 	}
 }

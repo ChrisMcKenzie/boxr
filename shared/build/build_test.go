@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/Secret-Ironman/boxr/shared/docker"
 	"github.com/Secret-Ironman/boxr/shared/git"
 	"github.com/Secret-Ironman/boxr/shared/parser"
-	"github.com/fsouza/go-dockerclient"
 )
 
 func TestRun(t *testing.T) {
-	endpoint := "unix:///var/run/docker.sock"
-	client, _ := docker.NewClient(endpoint)
+	client := docker.New()
 	b := New(client)
 
 	b.Boxr = &parser.Boxr{
