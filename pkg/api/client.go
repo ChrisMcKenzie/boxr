@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/Secret-Ironman/boxr/shared/types"
+	"github.com/Secret-Ironman/boxr/pkg/types"
 )
 
 type apiClient struct {

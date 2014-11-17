@@ -5,11 +5,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/Secret-Ironman/boxr/shared/build"
-	"github.com/Secret-Ironman/boxr/shared/docker"
-	"github.com/Secret-Ironman/boxr/shared/git"
-	"github.com/Secret-Ironman/boxr/shared/parser"
-	"github.com/Secret-Ironman/boxr/shared/types"
+	"github.com/Secret-Ironman/boxr/pkg/build"
+	"github.com/Secret-Ironman/boxr/pkg/docker"
+	"github.com/Secret-Ironman/boxr/pkg/git"
+	"github.com/Secret-Ironman/boxr/pkg/parser"
+	"github.com/Secret-Ironman/boxr/pkg/types"
 	"github.com/gin-gonic/gin"
 )
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Secret-Ironman/boxr/shared/process"
+	"github.com/Secret-Ironman/boxr/pkg/process"
 )
 
 type Repo struct {

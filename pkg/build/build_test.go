@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Secret-Ironman/boxr/shared/docker"
-	"github.com/Secret-Ironman/boxr/shared/git"
-	"github.com/Secret-Ironman/boxr/shared/parser"
+	"github.com/Secret-Ironman/boxr/pkg/docker"
+	"github.com/Secret-Ironman/boxr/pkg/git"
+	"github.com/Secret-Ironman/boxr/pkg/parser"
 )
 
 func TestRun(t *testing.T) {

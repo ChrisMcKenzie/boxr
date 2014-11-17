@@ -12,20 +12,11 @@ godep:
 deps-save: 
 	godep save -r ./...
 
-build-all: build-boxr build-forklift build-shelf
+build:
+	godep go build -o bin/boxr -ldflags "-X main.version $(VERSION)dev-$(SHA)" main.go
 
-build-boxr:
-	godep go build -o bin/boxr -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/boxr
-
-build-forklift:
-	godep go build -o bin/forklift -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/forklift
-
-build-shelf:
-	godep go build -o bin/shelf -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/cmd/shelf
-
-test: godep
+test:
 	godep go test -v ./...
 
-run: 
-	bin/boxr s &
-	bin/forklift &
+run: build
+	bin/boxr s 

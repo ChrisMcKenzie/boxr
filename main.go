@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/Secret-Ironman/boxr/shared/api"
-	"github.com/Secret-Ironman/boxr/shared/types"
+	"github.com/Secret-Ironman/boxr/pkg/api"
+	"github.com/Secret-Ironman/boxr/pkg/types"
 	"github.com/codegangsta/cli"
 	"github.com/fatih/color"
 )

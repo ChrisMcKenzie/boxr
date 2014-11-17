@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	"github.com/Secret-Ironman/boxr/shared/types"
+	"github.com/Secret-Ironman/boxr/pkg/types"
 	"github.com/coopernurse/gorp"
 	_ "github.com/mattn/go-sqlite3"
 )

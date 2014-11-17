@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/Secret-Ironman/boxr/shared/db"
-	"github.com/Secret-Ironman/boxr/shared/types"
-	"github.com/Secret-Ironman/boxr/shared/utils"
+	"github.com/Secret-Ironman/boxr/pkg/db"
+	"github.com/Secret-Ironman/boxr/pkg/types"
+	"github.com/Secret-Ironman/boxr/pkg/utils"
 	"github.com/coopernurse/gorp"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"

@@ -9,11 +9,11 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/Secret-Ironman/boxr/shared/docker"
-	"github.com/Secret-Ironman/boxr/shared/dockerfile"
-	"github.com/Secret-Ironman/boxr/shared/git"
-	"github.com/Secret-Ironman/boxr/shared/parser"
-	"github.com/Secret-Ironman/boxr/shared/utils"
+	"github.com/Secret-Ironman/boxr/pkg/docker"
+	"github.com/Secret-Ironman/boxr/pkg/dockerfile"
+	"github.com/Secret-Ironman/boxr/pkg/git"
+	"github.com/Secret-Ironman/boxr/pkg/parser"
+	"github.com/Secret-Ironman/boxr/pkg/utils"
 )
 
 var log = utils.Logger()
