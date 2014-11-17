@@ -3,20 +3,21 @@ package api
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"time"
 
 	"github.com/Secret-Ironman/boxr/shared/db"
 	"github.com/Secret-Ironman/boxr/shared/types"
+	"github.com/Secret-Ironman/boxr/shared/utils"
 	"github.com/coopernurse/gorp"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var log = utils.Logger()
+
 type Response struct {
-	Message interface{}   `json:"message" binding:"required"`
-	Took    time.Duration `json:"took" binding:"required"`
-	Success bool          `json:"success"`
+	Message interface{} `json:"message" binding:"required"`
+	Took    string      `json:"took" binding:"required"`
+	Success bool        `json:"success"`
 }
 
 type Api struct {
@@ -68,6 +69,6 @@ func (c *Api) initDb(dbFile string) *gorp.DbMap {
 
 func checkErr(err error, msg string) {
 	if err != nil {
-		log.Fatalln(msg, err)
+		log.Error(msg)
 	}
 }

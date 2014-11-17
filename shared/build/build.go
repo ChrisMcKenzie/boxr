@@ -138,9 +138,14 @@ func (b *Builder) run() error {
 	}
 
 	// configure if Docker should run in privileged mode
-	host := docker.HostConfig{
-	// Privileged: (b.Privileged && len(b.Repo.PR) == 0),
-	}
+	host := docker.HostConfig{}
+	host.PortBindings = make(map[docker.Port][]docker.PortBinding)
+
+	// for port, _ := range b.Boxr.Ports {
+	// 	host.PortBindings[port] = []PortBinding{{HostIp: "127.0.0.1", HostPort: ""}}
+	// }
+	//
+	host.PortBindings["4000"] = []docker.PortBinding{{HostIp: "0.0.0.0", HostPort: "4000"}}
 
 	log.Notice("starting build %s", b.Boxr.Name)
 
@@ -175,9 +180,13 @@ func (b *Builder) writeDockerfile(tr *tar.Writer) {
 	t := time.Now()
 	df := dockerfile.New(b.Boxr.Box)
 	df.WriteEnv("BOXR", "true")
+	// TODO: make dynamic port selection
+	df.WriteEnv("PORT", "4000")
+
+	df.WriteExpose("4000")
 
 	for _, step := range b.Boxr.Build {
-		df.WriteRun(fmt.Sprintf("%s; %s", b.Repo.Dir, step))
+		df.WriteRun(fmt.Sprintf("export PORT=4000; %s; %s", b.Repo.Dir, step))
 	}
 
 	tr.WriteHeader(&tar.Header{Name: "Dockerfile", Size: int64(len(df.Bytes())), ModTime: t, AccessTime: t, ChangeTime: t})

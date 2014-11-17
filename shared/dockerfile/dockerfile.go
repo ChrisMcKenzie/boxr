@@ -39,6 +39,10 @@ func (d *Dockerfile) WriteEnv(key string, value string) {
 	d.WriteString(fmt.Sprintf("ENV %s %s\n", key, value))
 }
 
+func (d *Dockerfile) WriteExpose(port string) {
+	d.WriteString(fmt.Sprintf("EXPOSE %s\n", port))
+}
+
 func (d *Dockerfile) WriteEntrypoint(path string) {
 	d.WriteString(fmt.Sprintf("ENTRYPOINT %s\n", path))
 }

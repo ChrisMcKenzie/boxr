@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/codegangsta/cli"
-	"github.com/fatih/color"
 	"github.com/Secret-Ironman/boxr/shared/api"
 	"github.com/Secret-Ironman/boxr/shared/types"
+	"github.com/codegangsta/cli"
+	"github.com/fatih/color"
 )
 
 var (
