@@ -9,9 +9,17 @@ import (
 	"github.com/Secret-Ironman/boxr/pkg/docker"
 	"github.com/Secret-Ironman/boxr/pkg/git"
 	"github.com/Secret-Ironman/boxr/pkg/parser"
-	"github.com/Secret-Ironman/boxr/pkg/types"
 	"github.com/gin-gonic/gin"
 )
+
+type Pallet struct {
+	// Name of the pallet
+	Name string `db:"name" json:"name" binding:"required"`
+	// Git url of the pallet
+	Url string `db:"url" json:"url" binding:"required"`
+	// Status of the pallet
+	Status string `db:"status" json:"status"`
+}
 
 // var log = utils.Logger()
 
@@ -19,7 +27,7 @@ func (a *Api) PalletGetOne(c *gin.Context) {
 	start := time.Now()
 	name := c.Params.ByName("name")
 
-	var pallet types.Pallet
+	var pallet Pallet
 
 	err := a.db.SelectOne(&pallet, "select * from pallets where Name=?", name)
 
@@ -42,7 +50,7 @@ func (a *Api) PalletGetOne(c *gin.Context) {
 func (a *Api) PalletGetAll(c *gin.Context) {
 	start := time.Now()
 
-	var pallets []types.Pallet
+	var pallets []Pallet
 	_, err := a.db.Select(&pallets, "select * from pallets order by name")
 
 	if err != nil {
@@ -63,7 +71,7 @@ func (a *Api) PalletGetAll(c *gin.Context) {
 
 func (a *Api) PalletCreate(c *gin.Context) {
 	start := time.Now()
-	var pallet types.Pallet
+	var pallet Pallet
 
 	if !c.Bind(&pallet) {
 		log.Fatal("Unable to bind data.")
@@ -89,7 +97,7 @@ func (a *Api) PalletBuild(c *gin.Context) {
 	start := time.Now()
 	name := c.Params.ByName("name")
 
-	var pallet types.Pallet
+	var pallet Pallet
 
 	err := a.db.SelectOne(&pallet, "select * from pallets where Name=?", name)
 

@@ -13,7 +13,7 @@ deps-save:
 	godep save -r ./...
 
 build:
-	godep go build -o bin/boxr -ldflags "-X main.version $(VERSION)dev-$(SHA)" main.go
+	godep go build -o bin/boxr -ldflags "-X main.version $(VERSION)dev-$(SHA)" $(SELFPKG)/main.go
 
 test:
 	godep go test -v ./...

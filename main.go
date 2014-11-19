@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/Secret-Ironman/boxr/pkg/api"
-	"github.com/Secret-Ironman/boxr/pkg/types"
 	"github.com/codegangsta/cli"
 	"github.com/fatih/color"
 )
@@ -55,7 +54,7 @@ func main() {
 						name := c.Args().First()
 						repo := c.Args()[1]
 						// Create a new pallet.
-						payload := &types.Pallet{
+						payload := &api.Pallet{
 							Name: name,
 							Url:  repo,
 						}
