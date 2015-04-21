@@ -13,7 +13,7 @@ of features that are coming your way in 3..2..1..
 
 [Read the Docs](Docs/README.md)
 
-![flow chart](Docs/boxr-flow-diagram.png)
+![flow chart](docs/boxr-flow-diagram.png)
 
 
 
